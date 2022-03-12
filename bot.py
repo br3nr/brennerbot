@@ -3,15 +3,16 @@ import discord
 import os
 import sys
 import time
-
-import save
-import bullybot
-import person
-import profanity
-from ui import ui
-
 from discord.ext import commands
 from collections import Counter
+
+from src import save
+from src import bullybot
+from src import person
+from src import profanity
+from src.ui import ui
+
+
 
 
 client = commands.Bot(command_prefix = "+")
@@ -69,7 +70,7 @@ async def status_task():
         await u.init_vars(client.latency) 
         await u.menu()
         await asyncio.sleep(5)
-        os.system("clear")
+        #os.system("clear")
 
 
 
@@ -242,4 +243,7 @@ class colors:
     ENDC = '\033[0m'
     UNDERLINE = '\033[4m'
 
-client.run('INSERT KEY')
+
+print(os.environ)
+client.run(os.environ["DISCORD_TOKEN"])
+s

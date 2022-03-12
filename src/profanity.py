@@ -1,5 +1,4 @@
 import discord
-import profanity
 from discord.ext import commands
 from collections import Counter
 
