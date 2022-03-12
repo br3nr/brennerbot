@@ -3,6 +3,8 @@
 BrennerBot is a discord bot I created in order to experiment with Discords bot API, along with 
 having some fun with friends. 
 
+It is currently built from this GitHub repo to an Azure Web App for hosting.
+
 BrennerBot can do the following:
 1. Using the +say command, BrennerBot will read out text in a voice channel to simulatie conversation. This is achieved
    <br> by using [espeak-ng](https://github.com/espeak-ng/espeak-ng) to convert text to speech. 
