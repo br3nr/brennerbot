@@ -28,7 +28,6 @@ u = ui()
 # PURPOSE: executes once the client/bot has booted.
 @client.event
 async def on_ready():
-    os.system("clear")
     u.boot_title()
     client.loop.create_task(status_task())    
 
@@ -67,10 +66,8 @@ async def on_voice_state_update(member, before, after):
 #          to be asynchronously called during execution
 async def status_task():
     while True:
-        await u.init_vars(client.latency) 
-        await u.menu()
-        await asyncio.sleep(5)
-        #os.system("clear")
+        await asyncio.sleep(1)
+        
 
 
 
