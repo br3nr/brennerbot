@@ -4,6 +4,7 @@ import os
 import sys
 import time
 from discord.ext import commands
+from discord import ClientException
 from collections import Counter
 
 from src import save
@@ -12,11 +13,7 @@ from src import person
 from src import profanity
 from src.ui import ui
 
-
-
-
 client = commands.Bot(command_prefix = "+")
-
 u = ui()
 
 
@@ -28,7 +25,8 @@ u = ui()
 # PURPOSE: executes once the client/bot has booted.
 @client.event
 async def on_ready():
-    u.boot_title()
+    print("Bot connected :)")
+    #u.boot_title()                          //removed title for now
     client.loop.create_task(status_task())    
 
 
@@ -83,8 +81,12 @@ async def status_task():
 # PURPOSE: Allows the user to specify what channel the bot should join
 #          based off the provided ID
 @client.command()
-async def follow(ctx):
+async def join(ctx):
     try:
+        voice_client = discord.utils.get(client.voice_clients, guild=ctx.guild)
+        if(voice_client):
+            await voice_client.disconnect()
+
         print(ctx.message.author.voice.channel)
         voiceChannel=ctx.message.author.voice.channel
         await voiceChannel.connect()
@@ -97,7 +99,7 @@ async def follow(ctx):
 # PURPOSE: User can request that the bot joins the channel that they
 #          are currently in. 
 @client.command()
-async def join(ctx):
+async def goto(ctx):
     try:
         guild = ctx.guild
         message = ctx.message.content[6:]
@@ -241,6 +243,4 @@ class colors:
     UNDERLINE = '\033[4m'
 
 
-print(os.environ)
 client.run(os.environ["DISCORD_TOKEN"])
-s
