@@ -13,7 +13,7 @@ from src import person
 from src import profanity
 from src.ui import ui
 
-client = commands.Bot(command_prefix = "+")
+client = commands.Bot(command_prefix="+", intents=discord.Intents.all())
 u = ui()
 
 

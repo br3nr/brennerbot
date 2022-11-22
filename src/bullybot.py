@@ -7,7 +7,7 @@ responses = [
                 "Silence jabroni."
         ]
 
-client = commands.Bot(command_prefix = "+")
+#client = commands.Bot(command_prefix = "+")
 
 async def initBully(message):
     uid = str(message.author.id)
