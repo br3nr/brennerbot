@@ -25,10 +25,26 @@ u = ui()
 # PURPOSE: executes once the client/bot has booted.
 @client.event
 async def on_ready():
-    print("Bot connected :)")
-    #u.boot_title()                          //removed title for now
-    client.loop.create_task(status_task())    
+    
 
+    try:
+        synced = await client.tree.sync()
+        client.loop.create_task(status_task())    
+        print("Synced: {}".format(synced))
+    except ClientException:
+        print("Failed to sync")
+    
+
+
+@client.tree.command(name="hello")
+async def hello(ctx: discord.Interaction):
+    await ctx.response.send_message(f"Hello {ctx.author.mention}!", ephemeral=True)
+
+
+@client.tree.command(name="speak")
+@app_commands.describe(arg="What should the bot say?")
+async def speak(ctx: discord.Interaction, arg: str):
+    await ctx.response.send_message(arg, ephemeral=True)
 
 
 #  METHOD: on_message()
