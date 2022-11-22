@@ -138,6 +138,7 @@ async def say(ctx):
         voice.play(discord.FFmpegPCMAudio(f, executable="ffmpeg", pipe=True,
                 stderr=None, before_options="-fflags discardcorrupt -guess_layout_max 0", options=None))
         f.close()
+        print("Done")
     except AttributeError:
         print(colors.FAIL + "Not in a voice channel")
 
