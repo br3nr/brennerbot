@@ -90,6 +90,11 @@ async def join(ctx):
         print(ctx.message.author.voice.channel)
         voiceChannel=ctx.message.author.voice.channel
         await voiceChannel.connect()
+        f = open("message", "r")
+        voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
+        voice.play(discord.FFmpegPCMAudio(f, executable="ffmpeg", pipe=True,
+                stderr=None, before_options="-fflags discardcorrupt -guess_layout_max 0", options=None))
+        f.close()
     except ClientException:
         print(colors.FAIL + "Client Exception: Is the caller in a channel?" + colors.ENDC)
 
