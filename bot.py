@@ -5,6 +5,7 @@ import sys
 import time
 from discord.ext import commands
 from discord import ClientException
+from discord import app_commands
 from collections import Counter
 
 from src import save
@@ -13,7 +14,7 @@ from src import person
 from src import profanity
 from src.ui import ui
 
-client = commands.Bot(command_prefix="+", intents=discord.Intents.all())
+client = commands.Bot(command_prefix="!", intents=discord.Intents.all())
 u = ui()
 
 
