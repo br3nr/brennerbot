@@ -39,7 +39,7 @@ async def on_ready():
 
 @client.tree.command(name="hello")
 async def hello(ctx: discord.Interaction):
-    await ctx.response.send_message(f"Hello {ctx.author.mention}!", ephemeral=True)
+    await ctx.response.send_message(f"Hello {ctx.user.mention}!", ephemeral=True)
 
 
 @client.tree.command(name="speak")
