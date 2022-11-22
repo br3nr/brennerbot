@@ -131,7 +131,7 @@ async def goto(ctx):
 async def say(ctx):
     try:    
         message = ctx.message.content
-        command = 'espeak-ng -p 10 -s 140 -a 1000 -ven-us --stdout "' + message[5:] + '" > message'
+        command = 'espeak -p 10 -s 140 -a 1000 -ven-us --stdout "' + message[5:] + '" > message'
         os.system(command)
         f = open("message", "r")
         voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
