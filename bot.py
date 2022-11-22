@@ -122,6 +122,17 @@ async def goto(ctx):
         print(colors.FAIL + "Client Exception thrown in join()")
 
 
+@client.command()
+async def ping(ctx):
+    '''
+    This text will be shown in the help command
+    '''
+
+    # Get the latency of the bot
+    latency = client.latency  # Included in the Discord.py library
+    # Send it to the user
+    await ctx.send(latency)
+
 
 #---------------------------
 #       SPEACH LOGIC 
