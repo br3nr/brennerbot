@@ -1,0 +1,216 @@
+[2022-11-22 12:48:45] [INFO    ] discord.client: logging in using static token
+[2022-11-22 12:48:46] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 14a6c5c6e0f6cd08df38890a9c0d809d).
+[2022-11-22 12:48:49] [INFO    ] discord.client: logging in using static token
+[2022-11-22 12:48:50] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: ee96048d333d7e9fd646798b6446be1b).
+[2022-11-22 12:48:58] [INFO    ] discord.client: logging in using static token
+[2022-11-22 12:48:59] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 80f7ba63da094666295b87717716e630).
+[2022-11-22 12:49:01] [WARNING ] discord.http: We are being rate limited. PUT https://discord.com/api/v10/applications/748778849751400871/commands responded with 429. Retrying in 47.08 seconds.
+[2022-11-22 12:49:05] [INFO    ] discord.client: logging in using static token
+[2022-11-22 12:49:06] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: c3f4b0764aecf532fd0ddeb7c84d2e85).
+[2022-11-22 12:49:08] [WARNING ] discord.http: We are being rate limited. PUT https://discord.com/api/v10/applications/748778849751400871/commands responded with 429. Retrying in 39.66 seconds.
+[2022-11-22 12:49:24] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'hello'
+Traceback (most recent call last):
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 862, in _do_call
+    return await self._callback(interaction, **params)  # type: ignore
+  File "/home/max/source/repo/brennerbot/bot.py", line 42, in hello
+    await ctx.response.send_message(f"Hello {ctx.user.mention}!", ephemeral=True)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/interactions.py", line 769, in send_message
+    await adapter.create_interaction_response(
+  File "/home/max/.local/lib/python3.9/site-packages/discord/webhook/async_.py", line 218, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/tree.py", line 1242, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 887, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 880, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'hello' raised an exception: NotFound: 404 Not Found (error code: 10062): Unknown interaction
+[2022-11-22 12:49:24] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'hello'
+Traceback (most recent call last):
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 862, in _do_call
+    return await self._callback(interaction, **params)  # type: ignore
+  File "/home/max/source/repo/brennerbot/bot.py", line 42, in hello
+    await ctx.response.send_message(f"Hello {ctx.user.mention}!", ephemeral=True)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/interactions.py", line 769, in send_message
+    await adapter.create_interaction_response(
+  File "/home/max/.local/lib/python3.9/site-packages/discord/webhook/async_.py", line 218, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/tree.py", line 1242, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 887, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 880, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'hello' raised an exception: NotFound: 404 Not Found (error code: 10062): Unknown interaction
+[2022-11-22 12:50:15] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'speak'
+Traceback (most recent call last):
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 862, in _do_call
+    return await self._callback(interaction, **params)  # type: ignore
+  File "/home/max/source/repo/brennerbot/bot.py", line 48, in speak
+    await ctx.response.send_message(arg, ephemeral=True)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/interactions.py", line 769, in send_message
+    await adapter.create_interaction_response(
+  File "/home/max/.local/lib/python3.9/site-packages/discord/webhook/async_.py", line 218, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/tree.py", line 1242, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 887, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 880, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'speak' raised an exception: NotFound: 404 Not Found (error code: 10062): Unknown interaction
+[2022-11-22 12:50:15] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'speak'
+Traceback (most recent call last):
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 862, in _do_call
+    return await self._callback(interaction, **params)  # type: ignore
+  File "/home/max/source/repo/brennerbot/bot.py", line 48, in speak
+    await ctx.response.send_message(arg, ephemeral=True)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/interactions.py", line 769, in send_message
+    await adapter.create_interaction_response(
+  File "/home/max/.local/lib/python3.9/site-packages/discord/webhook/async_.py", line 218, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/tree.py", line 1242, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 887, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 880, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'speak' raised an exception: NotFound: 404 Not Found (error code: 10062): Unknown interaction
+[2022-11-22 12:50:44] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'hello'
+Traceback (most recent call last):
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 862, in _do_call
+    return await self._callback(interaction, **params)  # type: ignore
+  File "/home/max/source/repo/brennerbot/bot.py", line 42, in hello
+    await ctx.response.send_message(f"Hello {ctx.user.mention}!", ephemeral=True)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/interactions.py", line 769, in send_message
+    await adapter.create_interaction_response(
+  File "/home/max/.local/lib/python3.9/site-packages/discord/webhook/async_.py", line 218, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/tree.py", line 1242, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 887, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 880, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'hello' raised an exception: NotFound: 404 Not Found (error code: 10062): Unknown interaction
+[2022-11-22 12:50:44] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'hello'
+Traceback (most recent call last):
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 862, in _do_call
+    return await self._callback(interaction, **params)  # type: ignore
+  File "/home/max/source/repo/brennerbot/bot.py", line 42, in hello
+    await ctx.response.send_message(f"Hello {ctx.user.mention}!", ephemeral=True)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/interactions.py", line 769, in send_message
+    await adapter.create_interaction_response(
+  File "/home/max/.local/lib/python3.9/site-packages/discord/webhook/async_.py", line 218, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/tree.py", line 1242, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 887, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 880, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'hello' raised an exception: NotFound: 404 Not Found (error code: 10062): Unknown interaction
+[2022-11-22 12:51:54] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'speak'
+Traceback (most recent call last):
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 862, in _do_call
+    return await self._callback(interaction, **params)  # type: ignore
+  File "/home/max/source/repo/brennerbot/bot.py", line 48, in speak
+    await ctx.response.send_message(arg, ephemeral=True)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/interactions.py", line 769, in send_message
+    await adapter.create_interaction_response(
+  File "/home/max/.local/lib/python3.9/site-packages/discord/webhook/async_.py", line 218, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/tree.py", line 1242, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 887, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 880, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'speak' raised an exception: NotFound: 404 Not Found (error code: 10062): Unknown interaction
+[2022-11-22 12:51:54] [ERROR   ] discord.app_commands.tree: Ignoring exception in command 'speak'
+Traceback (most recent call last):
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 862, in _do_call
+    return await self._callback(interaction, **params)  # type: ignore
+  File "/home/max/source/repo/brennerbot/bot.py", line 48, in speak
+    await ctx.response.send_message(arg, ephemeral=True)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/interactions.py", line 769, in send_message
+    await adapter.create_interaction_response(
+  File "/home/max/.local/lib/python3.9/site-packages/discord/webhook/async_.py", line 218, in request
+    raise NotFound(response, data)
+discord.errors.NotFound: 404 Not Found (error code: 10062): Unknown interaction
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/tree.py", line 1242, in _call
+    await command._invoke_with_namespace(interaction, namespace)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 887, in _invoke_with_namespace
+    return await self._do_call(interaction, transformed_values)
+  File "/home/max/.local/lib/python3.9/site-packages/discord/app_commands/commands.py", line 880, in _do_call
+    raise CommandInvokeError(self, e) from e
+discord.app_commands.errors.CommandInvokeError: Command 'speak' raised an exception: NotFound: 404 Not Found (error code: 10062): Unknown interaction
+[2022-11-22 13:26:54] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session 14a6c5c6e0f6cd08df38890a9c0d809d.
+[2022-11-22 14:05:34] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session c3f4b0764aecf532fd0ddeb7c84d2e85.
+[2022-11-22 14:25:31] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session 14a6c5c6e0f6cd08df38890a9c0d809d.
+[2022-11-22 14:50:44] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session 14a6c5c6e0f6cd08df38890a9c0d809d.
+[2022-11-22 15:04:43] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session 14a6c5c6e0f6cd08df38890a9c0d809d.
+[2022-11-22 15:23:42] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session ee96048d333d7e9fd646798b6446be1b.
+[2022-11-22 15:31:20] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session c3f4b0764aecf532fd0ddeb7c84d2e85.
+[2022-11-22 15:59:32] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session ee96048d333d7e9fd646798b6446be1b.
+[2022-11-22 16:10:30] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session c3f4b0764aecf532fd0ddeb7c84d2e85.
+[2022-11-22 16:26:30] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session c3f4b0764aecf532fd0ddeb7c84d2e85.
+[2022-11-22 17:12:12] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session c3f4b0764aecf532fd0ddeb7c84d2e85.
+[2022-11-22 17:27:49] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session 14a6c5c6e0f6cd08df38890a9c0d809d.
+[2022-11-22 17:29:53] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session c3f4b0764aecf532fd0ddeb7c84d2e85.
+[2022-11-22 17:40:12] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session c3f4b0764aecf532fd0ddeb7c84d2e85.
+[2022-11-22 17:54:54] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session c3f4b0764aecf532fd0ddeb7c84d2e85.
+[2022-11-22 18:28:13] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session ee96048d333d7e9fd646798b6446be1b.
+[2022-11-22 19:55:40] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session 14a6c5c6e0f6cd08df38890a9c0d809d.
+[2022-11-22 20:05:25] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session c3f4b0764aecf532fd0ddeb7c84d2e85.
+[2022-11-22 20:28:08] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session ee96048d333d7e9fd646798b6446be1b.
+[2022-11-22 20:31:13] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session 14a6c5c6e0f6cd08df38890a9c0d809d.
+[2022-11-22 20:59:49] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session ee96048d333d7e9fd646798b6446be1b.
+[2022-11-22 21:08:23] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session 14a6c5c6e0f6cd08df38890a9c0d809d.
+[2022-11-22 21:23:41] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session ee96048d333d7e9fd646798b6446be1b.
+[2022-11-22 21:47:40] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session c3f4b0764aecf532fd0ddeb7c84d2e85.
+[2022-11-22 22:07:44] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session ee96048d333d7e9fd646798b6446be1b.
+[2022-11-22 22:43:41] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session ee96048d333d7e9fd646798b6446be1b.
+[2022-11-22 23:08:00] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session 14a6c5c6e0f6cd08df38890a9c0d809d.
+[2022-11-22 23:35:58] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session 14a6c5c6e0f6cd08df38890a9c0d809d.
+[2022-11-23 00:56:23] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session c3f4b0764aecf532fd0ddeb7c84d2e85.
+[2022-11-23 01:02:44] [INFO    ] discord.gateway: Shard ID None has successfully RESUMED session 14a6c5c6e0f6cd08df38890a9c0d809d.
