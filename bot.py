@@ -1,18 +1,23 @@
 import asyncio
 import discord
+import youtube_dl
 import os
 import sys
 import time
 from discord.ext import commands
 from discord import ClientException
 from discord import app_commands
-from collections import Counter
-
 from src import save
 from src import bullybot
-from src import person
-from src import profanity
 from src.ui import ui
+
+
+voice_clients = {}
+
+yt_dl_opts = {'format': 'bestaudio/best'}
+ytdl = youtube_dl.YoutubeDL(yt_dl_opts)
+
+ffmpeg_options = {'options': "-vn"}
 
 client = commands.Bot(command_prefix="!", intents=discord.Intents.all())
 u = ui()
@@ -21,13 +26,58 @@ u = ui()
 #############################    CLIENT EVENTS    #############################
 
 
+# This event happens when a message gets sent
+@client.command()
+async def play(msg):
+
+    try:
+        voice_client = await msg.author.voice.channel.connect()
+        voice_clients[voice_client.guild.id] = voice_client
+    except:
+        print("error")
+
+    try:
+        url = msg.message.content.split()[1]
+
+        loop = asyncio.get_event_loop()
+        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=False))
+
+        song = data['url']
+        player = discord.FFmpegPCMAudio(song, **ffmpeg_options)
+
+        voice_clients[msg.guild.id].play(player)
+
+    except Exception as err:
+        print(err)
+
+
+@client.command()
+async def pause(msg):
+    try:
+        voice_clients[msg.guild.id].pause()
+    except Exception as err:
+        print(err)
+
+@client.command()
+async def resume(msg):
+    try:
+        voice_clients[msg.guild.id].resume()
+    except Exception as err:
+        print(err)
+
+    
+@client.command()
+async def stop(msg):
+    try:
+        voice_clients[msg.guild.id].stop()
+        await voice_clients[msg.guild.id].disconnect()
+    except Exception as err:
+        print(err)
 
 # METHOD: on_ready()
 # PURPOSE: executes once the client/bot has booted.
 @client.event
 async def on_ready():
-    
-
     try:
         synced = await client.tree.sync()
         client.loop.create_task(status_task())    
@@ -35,6 +85,8 @@ async def on_ready():
     except ClientException:
         print("Failed to sync")
     
+
+
 
 
 @client.tree.command(name="hello")
@@ -89,9 +141,9 @@ async def status_task():
 #############################   CLIENT COMMANDS   #############################
 
 
-#---------------------------
+# ---------------------------
 #      VOICE CHANNELS
-#---------------------------
+# ---------------------------
 
 
 #  METHOD: follow
@@ -107,11 +159,6 @@ async def join(ctx):
         print(ctx.message.author.voice.channel)
         voiceChannel=ctx.message.author.voice.channel
         await voiceChannel.connect()
-        f = open("message", "r")
-        voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
-        voice.play(discord.FFmpegPCMAudio(f, executable="ffmpeg", pipe=True,
-                stderr=None, before_options="-fflags discardcorrupt -guess_layout_max 0", options=None))
-        f.close()
     except ClientException:
         print(colors.FAIL + "Client Exception: Is the caller in a channel?" + colors.ENDC)
 
@@ -151,9 +198,10 @@ async def ping(ctx):
     await ctx.send(latency)
 
 
-#---------------------------
+# ---------------------------
 #       SPEACH LOGIC 
-#---------------------------
+# ---------------------------
+
 
 
 
@@ -176,9 +224,9 @@ async def say(ctx):
         print(colors.FAIL + "Not in a voice channel")
 
 
-#---------------------------
+# ---------------------------
 #      MESSAGE CONTROL 
-#---------------------------
+# ---------------------------
 
 #  METHOD: wordSleuth()
 # PURPOSE: Given a word specified by the user, searches previous messages in that channel
@@ -268,6 +316,9 @@ async def bully(message):
     uid = message.author.id
     if (uid == target):
         await bullybot.initBully(message)
+
+
+    
 
 
 class colors:
