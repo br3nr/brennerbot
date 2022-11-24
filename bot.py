@@ -13,13 +13,21 @@ from src.ui import ui
 
 
 voice_clients = {}
+yt_dl_opts = {
+    'format': 'bestaudio/best',
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'mp3',
+        'preferredquality': '96',
+    }],
 
-yt_dl_opts = {'format': 'bestaudio/best'}
+}
+
 ytdl = youtube_dl.YoutubeDL(yt_dl_opts)
 
 ffmpeg_options = {'options': "-vn"}
 
-client = commands.Bot(command_prefix="!", intents=discord.Intents.all())
+client = commands.Bot(command_prefix="?", intents=discord.Intents.all())
 u = ui()
 
 
