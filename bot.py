@@ -14,14 +14,17 @@ from src.ui import ui
 
 voice_clients = {}
 yt_dl_opts = {
-        'format':'bestaudio/best',
+        'format':'140',
+        'noplaylist': True,        
+        'outtmpl': 'music',
         'postprocessors': [{
         'key': 'FFmpegExtractAudio',
         'preferredcodec': 'mp3',
-        'preferredquality': '98',
+        'preferredquality': '64',
     }],
 
 }
+
 
 ytdl = youtube_dl.YoutubeDL(yt_dl_opts)
 
@@ -46,10 +49,11 @@ async def play(msg):
 
     try:
         url = msg.message.content.split()[1]
-
         loop = asyncio.get_event_loop()
-        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=False))
 
+
+        data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=False))
+        
         song = data['url']
         player = discord.FFmpegPCMAudio(song, **ffmpeg_options)
 
@@ -341,3 +345,4 @@ class colors:
 
 
 client.run(os.environ["DISCORD_TOKEN"])
+
