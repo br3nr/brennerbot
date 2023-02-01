@@ -75,23 +75,6 @@ async def on_message(message):
 
 
 
-#  METHOD: on_voice_state_update
-# PURPOSE: For every change in user voice state (mute, deafen, etc), 
-#          on_voice_state_update is triggered. 
-@client.event
-async def on_voice_state_update(member, before, after):
-    if not after.afk and member.id == 253874297066618880:
-        ctx = member.guild.voice_client
-        print(colors.OKCYAN + "User joined a channel.")
-        
-        if ctx is None:
-            print(colors.WARNING + "Im not in the channel when they joined")
-        else:
-            print(colors.OKCYAN + "I am in the channel")
-    else:
-        pass
-
-
 
 #  METHOD: status_task()
 # PURPOSE: Is called on a loop from on_ready, and allows certain methods
