@@ -11,7 +11,7 @@ from src import save
 from src import bullybot
 from src.ui import ui
 from music import Music
-
+import datetime
 
 client = commands.Bot(command_prefix="?", intents=discord.Intents.all())
 u = ui()
@@ -34,7 +34,24 @@ async def on_ready():
         print("Failed to sync")
     
 
+@client.tree.command()
+async def longest_users(ctx: discord.Interaction, num_users: int = 5):
+    # Get all members in the server
+    members = sorted(ctx.guild.members, key=lambda x: x.joined_at)
 
+    # Get the top 5 members who have been in the server for the longest
+    longest_members = members[:num_users]
+
+    # Prepare the message to be sent
+    message = f"The top {num_users} users who have been in the server for the longest are:\n"
+    for i, member in enumerate(longest_members, 1):
+        now = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
+        joined_at = member.joined_at.replace(tzinfo=datetime.timezone.utc)
+        delta = now - joined_at
+        message += f"{i}. {member.name} ({delta.days} days)\n" #\n
+
+    # Send the message
+    await ctx.response.send_message(message)
 
 
 @client.tree.command(name="hello")
@@ -264,10 +281,6 @@ async def bully(message):
     uid = message.author.id
     if (uid == target):
         await bullybot.initBully(message)
-
-
-    
-
 
 class colors:
     HEADER = '\033[95m'
