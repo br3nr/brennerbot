@@ -16,7 +16,7 @@ class CustomPlayer(wavelink.Player):
         super().__init__()
         self.queue = wavelink.Queue()
 
-        
+
 class Music(commands.Cog):
     """Music cog to hold Wavelink related commands and listeners."""
 
@@ -45,35 +45,59 @@ class Music(commands.Cog):
         """Event fired when a node has finished connecting."""
         print(f'Node: <{node.identifier}> is ready!')
 
-    
+    @commands.command()
+    async def skip(self, ctx):
+        vc = ctx.voice_client
+        if vc:
+            if not vc.is_playing():
+                return await ctx.send("Nothing is playing.")
+            if vc.queue.is_empty:
+                return await vc.stop()
 
-    def check_string(self, input_string):
-        youtube_pattern = re.compile(
-            r'https?://(www\.)?(youtube|youtu)(\.com|\.be)/(playlist\?list=|watch\?v=|embed/)([a-zA-Z0-9-_]+)')
-        spotify_pattern = re.compile(
-            r'https?://open\.spotify\.com/(album|playlist|track)/([a-zA-Z0-9-]+)(/[a-zA-Z0-9-]+)?(\?.*)?')
-
-        youtube_match = youtube_pattern.match(input_string)
-        spotify_match = spotify_pattern.match(input_string)
-
-        if youtube_match:
-            if 'watch?v=' in youtube_match.group():
-                return 'YouTube Song'
-            elif 'playlist?list=' in youtube_match.group():
-                return 'YouTube Playlist'
-            else:
-                return 'YouTube URL'
-        elif spotify_match:
-            if 'album' in spotify_match.group():
-                return 'Spotify Album'
-            elif 'playlist' in spotify_match.group():
-                return 'Spotify Playlist'
-            elif 'track' in spotify_match.group():
-                return 'Spotify Track'
-            else:
-                return 'Spotify URL'
+            await vc.seek(vc.track.length * 1000)
+            if vc.is_paused():
+                await vc.resume()
         else:
-            return 'Text'
+            await ctx.send("The bot is not connected to a voice channel.")
+
+    @commands.command()
+    async def pause(self, ctx):
+        vc = ctx.voice_client
+        if vc:
+            if vc.is_playing() and not vc.is_paused():
+                await vc.pause()
+            else:
+                await ctx.send("Nothing is playing.")
+        else:
+            await ctx.send("The bot is not connected to a voice channel")
+
+
+    @commands.command()
+    async def resume(self, ctx):
+        vc = ctx.voice_client
+        if vc:
+            if vc.is_paused():
+                await vc.resume()
+            else:
+                await ctx.send("Nothing is paused.")
+        else:
+            await ctx.send("The bot is not connected to a voice channel")
+
+    @commands.command()
+    async def play(self, ctx: commands.Context, *, search: str):
+        url_type = self.check_string(search)
+        action = self.url_type_mapping.get(url_type, None)
+
+        vc = ctx.voice_client
+        if not vc:
+            custom_player = CustomPlayer()
+            vc: CustomPlayer = await ctx.author.voice.channel.connect(cls=custom_player)
+
+        if action:
+            await action(self, ctx, search, vc)
+        else:
+            # handle text input
+            pass
 
     async def play_spotify_track(self, ctx: discord.ext.commands.Context, track: str, vc: CustomPlayer):
 
@@ -148,21 +172,36 @@ class Music(commands.Cog):
         'Text' : play_query,
     }
 
-    @commands.command()
-    async def play_media(self, ctx: commands.Context, *, search: str):
-        url_type = self.check_string(search)
-        action = self.url_type_mapping.get(url_type, None)
+    def check_string(self, input_string):
+        youtube_pattern = re.compile(
+            r'https?://(www\.)?(youtube|youtu)(\.com|\.be)/(playlist\?list=|watch\?v=|embed/)([a-zA-Z0-9-_]+)')
+        spotify_pattern = re.compile(
+            r'https?://open\.spotify\.com/(album|playlist|track)/([a-zA-Z0-9-]+)(/[a-zA-Z0-9-]+)?(\?.*)?')
 
-        vc = ctx.voice_client
-        if not vc:
-            custom_player = CustomPlayer()
-            vc: CustomPlayer = await ctx.author.voice.channel.connect(cls=custom_player)
+        youtube_match = youtube_pattern.match(input_string)
+        spotify_match = spotify_pattern.match(input_string)
 
-        if action:
-            await action(self, ctx, search, vc)
+        if youtube_match:
+            if 'watch?v=' in youtube_match.group():
+                return 'YouTube Song'
+            elif 'playlist?list=' in youtube_match.group():
+                return 'YouTube Playlist'
+            else:
+                return 'YouTube URL'
+        elif spotify_match:
+            if 'album' in spotify_match.group():
+                return 'Spotify Album'
+            elif 'playlist' in spotify_match.group():
+                return 'Spotify Playlist'
+            elif 'track' in spotify_match.group():
+                return 'Spotify Track'
+            else:
+                return 'Spotify URL'
         else:
-            # handle text input
-            pass
+            return 'Text'
+
+
+    
 
 
 
