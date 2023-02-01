@@ -97,7 +97,29 @@ class Music(commands.Cog):
             await action(self, ctx, search, vc)
         else:
             # handle text input
-            pass
+            await ctx.send("Idk that link is suss. Try again.")
+
+    @commands.command()
+    async def connect(ctx):
+        vc = ctx.voice_client # represents a discord voice connection
+        try:
+            channel = ctx.author.voice.channel
+        except AttributeError:
+            return await ctx.send("how can i join if you are nowhere to be found?")
+
+        if not vc:
+            await ctx.author.voice.channel.connect(cls=CustomPlayer())
+        else:
+            await ctx.send("I AM ALREADY CONNECTED TO A VOICE CHANNEL")
+
+
+    @commands.command()
+    async def disconnect(ctx):
+        vc = ctx.voice_client
+        if vc:
+            await vc.disconnect()
+        else:
+            await ctx.send("how can i disconnect when i am not connect?")
 
     async def play_spotify_track(self, ctx: discord.ext.commands.Context, track: str, vc: CustomPlayer):
 
@@ -121,31 +143,13 @@ class Music(commands.Cog):
                     description=f"Playing {vc.source.title} in {vc.channel}"
                 ))
 
-    async def play_youtube_song(self, ctx: discord.ext.commands.Context, song: str, vc: CustomPlayer):
-        if vc.is_playing() or not vc.queue.is_empty:
-            vc.queue.put(item=song)
-            await ctx.send(embed=discord.Embed(
-                title=song.title,
-                url=song.uri,
-                description=f"Queued {song.title} in {vc.channel}"
-            ))
-        else:
-            await vc.play(song)
-            await ctx.send(embed=discord.Embed(
-                title=vc.source.title,
-                url=vc.source.uri,
-                description=f"Playing {vc.source.title} in {vc.channel}"
-            ))
+    async def play_youtube_song(self, ctx: discord.ext.commands.Context, query: str, vc: CustomPlayer):
 
-    async def play_youtube_playlist(ctx: discord.ext.commands.Context, playlist: str):
-        # play youtube playlist
-        pass
-
-    async def play_query(self, ctx: discord.ext.commands.Context, search: str, vc: CustomPlayer):
-        
-        # convert query to youtube url
-        track = await wavelink.YouTubeTrack.search(query=search, return_first=True)
-
+        # remove time from youtube link 
+        query = re.sub(r'&t=\d+', '', query)
+        print(query)
+        track = await wavelink.NodePool.get_node().get_tracks(wavelink.YouTubeTrack, query)
+        track = track[0]
         if vc.is_playing() or not vc.queue.is_empty:
             vc.queue.put(item=track)
             await ctx.send(embed=discord.Embed(
@@ -160,8 +164,32 @@ class Music(commands.Cog):
                 url=vc.source.uri,
                 description=f"Playing {vc.source.title} in {vc.channel}"
             ))
+
+    async def play_youtube_playlist(ctx: discord.ext.commands.Context, playlist: str):
+        # play youtube playlist
         pass
 
+    async def play_query(self, ctx: discord.ext.commands.Context, search: str, vc: CustomPlayer):
+        
+        try:
+        # convert query to youtube url
+            track = await wavelink.YouTubeTrack.search(query=search, return_first=True)
+            if vc.is_playing() or not vc.queue.is_empty:
+                vc.queue.put(item=track)
+                await ctx.send(embed=discord.Embed(
+                    title=track.title,
+                    url=track.uri,
+                    description=f"Queued {track.title} in {vc.channel}"
+                ))
+            else:
+                await vc.play(track)
+                await ctx.send(embed=discord.Embed(
+                    title=vc.source.title,
+                    url=vc.source.uri,
+                    description=f"Playing {vc.source.title} in {vc.channel}"
+                ))
+        except Exception as e:
+            await ctx.send(f"That link is weird. Make sure theres no timestamp at the end.")
     # Map URL types to their corresponding functions
     url_type_mapping = {
         'Spotify Track': play_spotify_track,
