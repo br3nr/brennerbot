@@ -100,7 +100,7 @@ class Music(commands.Cog):
             await ctx.send("Idk that link is suss. Try again.")
 
     @commands.command()
-    async def connect(ctx):
+    async def connect(self, ctx):
         vc = ctx.voice_client # represents a discord voice connection
         try:
             channel = ctx.author.voice.channel
@@ -114,7 +114,7 @@ class Music(commands.Cog):
 
 
     @commands.command()
-    async def disconnect(ctx):
+    async def disconnect(self, ctx):
         vc = ctx.voice_client
         if vc:
             await vc.disconnect()
