@@ -1,14 +1,13 @@
 import discord
 from discord.ext import commands
 import wavelink
-from discord.ext import commands
+from discord import app_commands
 from wavelink.ext import spotify
 import re
 import os
 
 cid = os.environ["SPOTIFY_CLIENT_ID"]
 csecret = os.environ["SPOTIFY_CLIENT_SECRET"]
-
 
 class CustomPlayer(wavelink.Player):
 
@@ -39,6 +38,13 @@ class Music(commands.Cog):
         if not player.queue.is_empty:
             next_track = player.queue.get()
             await player.play(next_track)
+
+
+    
+    @app_commands.command(name="command-1")
+    async def my_command(self, interaction: discord.Interaction) -> None:
+        """ /command-1 """
+        await interaction.response.send_message("Hello from command 1!", ephemeral=True)
 
     @commands.Cog.listener()
     async def on_wavelink_node_ready(self, node: wavelink.Node):
@@ -82,6 +88,7 @@ class Music(commands.Cog):
                 await ctx.send("Nothing is paused.")
         else:
             await ctx.send("The bot is not connected to a voice channel")
+
 
     @commands.command()
     async def play(self, ctx: commands.Context, *, search: str):
@@ -172,7 +179,7 @@ class Music(commands.Cog):
         pass
 
     async def play_query(self, ctx: discord.ext.commands.Context, search: str, vc: CustomPlayer):
-        
+        print("Query")
     # convert query to youtube url
         track = await wavelink.YouTubeTrack.search(query=search, return_first=True)
         if vc.is_playing() or not vc.queue.is_empty:
@@ -200,8 +207,9 @@ class Music(commands.Cog):
     }
 
     def check_string(self, input_string):
+
         youtube_pattern = re.compile(
-            r'https?://(www\.)?(youtube|youtu)(\.com|\.be)/(playlist\?list=|watch\?v=|embed/)([a-zA-Z0-9-_]+)')
+           r'https?://(www\.)?(youtube|youtu)(\.com|\.be)/(playlist\?list=|watch\?v=|embed/|)([a-zA-Z0-9-_]+)(\&t=\d+s)?|https://youtu.be/([a-zA-Z0-9-_]+)(\?t=\d+s)?')
         spotify_pattern = re.compile(
             r'https?://open\.spotify\.com/(album|playlist|track)/([a-zA-Z0-9-]+)(/[a-zA-Z0-9-]+)?(\?.*)?')
 
@@ -209,7 +217,7 @@ class Music(commands.Cog):
         spotify_match = spotify_pattern.match(input_string)
 
         if youtube_match:
-            if 'watch?v=' in youtube_match.group():
+            if 'watch?v=' or  'youtu.be' in youtube_match.group():
                 return 'YouTube Song'
             elif 'playlist?list=' in youtube_match.group():
                 return 'YouTube Playlist'
@@ -226,16 +234,6 @@ class Music(commands.Cog):
                 return 'Spotify URL'
         else:
             return 'Text'
-
-
-    
-
-
-
-
-
-
-
 """
 
 @commands.command()
