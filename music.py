@@ -144,36 +144,12 @@ class Music(commands.Cog):
                 ))
 
     async def play_youtube_song(self, ctx: discord.ext.commands.Context, query: str, vc: CustomPlayer):
-
-        # remove time from youtube link 
-        query = re.sub(r'&t=\d+', '', query)
-        print(query)
-        track = await wavelink.NodePool.get_node().get_tracks(wavelink.YouTubeTrack, query)
-        track = track[0]
-        if vc.is_playing() or not vc.queue.is_empty:
-            vc.queue.put(item=track)
-            await ctx.send(embed=discord.Embed(
-                title=track.title,
-                url=track.uri,
-                description=f"Queued {track.title} in {vc.channel}"
-            ))
-        else:
-            await vc.play(track)
-            await ctx.send(embed=discord.Embed(
-                title=vc.source.title,
-                url=vc.source.uri,
-                description=f"Playing {vc.source.title} in {vc.channel}"
-            ))
-
-    async def play_youtube_playlist(ctx: discord.ext.commands.Context, playlist: str):
-        # play youtube playlist
-        pass
-
-    async def play_query(self, ctx: discord.ext.commands.Context, search: str, vc: CustomPlayer):
-        
         try:
-        # convert query to youtube url
-            track = await wavelink.YouTubeTrack.search(query=search, return_first=True)
+            # remove time from youtube link 
+            query = re.sub(r'&t=\d+', '', query)
+            print(query)
+            track = await wavelink.NodePool.get_node().get_tracks(wavelink.YouTubeTrack, query)
+            track = track[0]
             if vc.is_playing() or not vc.queue.is_empty:
                 vc.queue.put(item=track)
                 await ctx.send(embed=discord.Embed(
@@ -190,7 +166,30 @@ class Music(commands.Cog):
                 ))
         except Exception as e:
             await ctx.send(f"That link is weird. Make sure theres no timestamp at the end.")
-    # Map URL types to their corresponding functions
+
+    async def play_youtube_playlist(ctx: discord.ext.commands.Context, playlist: str):
+        # play youtube playlist
+        pass
+
+    async def play_query(self, ctx: discord.ext.commands.Context, search: str, vc: CustomPlayer):
+        
+    # convert query to youtube url
+        track = await wavelink.YouTubeTrack.search(query=search, return_first=True)
+        if vc.is_playing() or not vc.queue.is_empty:
+            vc.queue.put(item=track)
+            await ctx.send(embed=discord.Embed(
+                title=track.title,
+                url=track.uri,
+                description=f"Queued {track.title} in {vc.channel}"
+            ))
+        else:
+            await vc.play(track)
+            await ctx.send(embed=discord.Embed(
+                title=vc.source.title,
+                url=vc.source.uri,
+                description=f"Playing {vc.source.title} in {vc.channel}"
+            ))
+            # Map URL types to their corresponding functions
     url_type_mapping = {
         'Spotify Track': play_spotify_track,
         'Spotify Playlist': play_spotify_playlist,

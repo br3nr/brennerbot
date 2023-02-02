@@ -97,25 +97,6 @@ async def status_task():
 #  METHOD: follow
 # PURPOSE: Allows the user to specify what channel the bot should join
 #          based off the provided ID
-@client.command()
-async def join(ctx):
-    try:
-        voice_client = discord.utils.get(client.voice_clients, guild=ctx.guild)
-        if(voice_client):
-            await voice_client.disconnect()
-
-        print(ctx.message.author.voice.channel)
-        voiceChannel=ctx.message.author.voice.channel
-        await voiceChannel.connect()
-    except ClientException:
-        print(colors.FAIL + "Client Exception: Is the caller in a channel?" + colors.ENDC)
-
-@client.command()
-async def leave(ctx):
-    voice_client = discord.utils.get(client.voice_clients, guild=ctx.guild)
-    if voice_client:
-        await voice_client.disconnect()
-
 #  METHOD: join
 # PURPOSE: User can request that the bot joins the channel that they
 #          are currently in. 
