@@ -1,9 +1,6 @@
 import asyncio
 import discord
-import youtube_dl
 import os
-import sys
-import time
 from discord.ext import commands
 from discord import ClientException
 from discord import app_commands
@@ -12,6 +9,7 @@ from src import bullybot
 from src.ui import ui
 from music import Music
 import datetime
+
 
 client = commands.Bot(command_prefix="?", intents=discord.Intents.all())
 u = ui()
@@ -85,18 +83,9 @@ async def status_task():
         
 
 
-
 #############################   CLIENT COMMANDS   #############################
 
 
-# ---------------------------
-#      VOICE CHANNELS
-# ---------------------------
-
-
-#  METHOD: follow
-# PURPOSE: Allows the user to specify what channel the bot should join
-#          based off the provided ID
 #  METHOD: join
 # PURPOSE: User can request that the bot joins the channel that they
 #          are currently in. 
