@@ -1,4 +1,5 @@
 import discord
+import asyncio
 from discord.ext import commands
 import wavelink
 from discord import app_commands
@@ -39,6 +40,9 @@ class Music(commands.Cog):
             next_track = player.queue.get()
             await player.play(next_track)
 
+    @commands.Cog.listener()
+    async def on_disconnect():
+        print("I am disconnected")
 
     
     @app_commands.command(name="command-1")
@@ -108,16 +112,19 @@ class Music(commands.Cog):
 
     @commands.command()
     async def connect(self, ctx):
-        vc = ctx.voice_client # represents a discord voice connection
+        vc = ctx.voice_client
+        
         try:
             channel = ctx.author.voice.channel
         except AttributeError:
-            return await ctx.send("how can i join if you are nowhere to be found?")
+            return await ctx.send("How can I join if you are nowhere to be found?")
+        
+        if vc:
+            await vc.disconnect()
+        
+        voice = await channel.connect(cls=CustomPlayer())
+    
 
-        if not vc:
-            await ctx.author.voice.channel.connect(cls=CustomPlayer())
-        else:
-            await ctx.send("I AM ALREADY CONNECTED TO A VOICE CHANNEL")
 
 
     @commands.command()
