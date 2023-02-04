@@ -19,6 +19,7 @@ u = ui()
 
 
 
+
 # METHOD: on_ready()
 # PURPOSE: executes once the client/bot has booted.
 @client.event
@@ -28,6 +29,7 @@ async def on_ready():
         synced = await client.tree.sync()
         client.loop.create_task(status_task())    
         print("Synced: {}".format(synced))
+        print("WELCOME")
     except ClientException:
         print("Failed to sync")
     
@@ -61,18 +63,6 @@ async def hello(ctx: discord.Interaction):
 @app_commands.describe(arg="What should the bot say?")
 async def speak(ctx: discord.Interaction, arg: str):
     await ctx.response.send_message(arg, ephemeral=True)
-
-
-#  METHOD: on_message()
-# PURPOSE: For every given message sent into a channel, on_message
-#          will be called, and the bot will react accordingly
-@client.event
-async def on_message(message):
-    if message.author != client.user:
-        await client.process_commands(message)
-
-
-
 
 #  METHOD: status_task()
 # PURPOSE: Is called on a loop from on_ready, and allows certain methods
@@ -175,7 +165,7 @@ async def deleteMe(ctx):
             await message.delete()
 
 
-
+"""
 #  METHOD: cleanBot()
 # PURPOSE: Deletes every message sent by the bot in the calling channel.
 @client.command()
@@ -183,7 +173,7 @@ async def cleanBot(ctx):
     async for message in ctx.channel.history(limit=None):
         if(message.author.id == 748778849751400871):
             await message.delete()
-
+"""
 
 #  METHOD: deleteLast()
 # PURPOSE: Similar to deleteMe(), but deletes <num> amount of users messages
@@ -204,14 +194,14 @@ async def deleteLast(ctx, num):
     except ValueError as ve:
         await printToChannelDelete(ctx.message, "You are an idiot.")
 
-
+"""
 #  METHOD: saveMe()
 # PURPOSE: Calls the save_me method in the save.py class
 @client.command()
 async def saveMe(ctx):
     await save.save_me(ctx)
 
-
+"""
 #############################   BOT METHODS   #############################
 
 
@@ -226,7 +216,7 @@ async def printToChannel(message, text):
 async def printThenDelete(message, text):
     await message.channel.send(text, delete_after = 3)
 
-
+"""
 #  METHOD:
 # PURPOSE:
 async def bully(message):
@@ -234,6 +224,7 @@ async def bully(message):
     uid = message.author.id
     if (uid == target):
         await bullybot.initBully(message)
+"""
 
 class colors:
     HEADER = '\033[95m'
