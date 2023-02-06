@@ -10,7 +10,9 @@ import os
 cid = os.environ["SPOTIFY_CLIENT_ID"]
 csecret = os.environ["SPOTIFY_CLIENT_SECRET"]
 
+
 class CustomPlayer(wavelink.Player):
+    """Custom player class for wavelink."""
 
     def __init__(self):
         super().__init__()
@@ -18,7 +20,7 @@ class CustomPlayer(wavelink.Player):
 
 
 class Music(commands.Cog):
-    """Music cog to hold Wavelink related commands and listeners."""
+    """Suite of commands allowing BrennerBot to play music from Youtube and Spotify."""
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -41,22 +43,84 @@ class Music(commands.Cog):
             await player.play(next_track)
 
     @commands.Cog.listener()
-    async def on_disconnect():
-        print("I am disconnected")
+    async def on_wavelink_node_ready(self, node: wavelink.Node):
+        """Event fired when a node has finished connecting."""
+        print(f'Node: <{node.identifier}> is ready!')
 
-    
     @app_commands.command(name="command-1")
     async def my_command(self, interaction: discord.Interaction) -> None:
         """ /command-1 """
         await interaction.response.send_message("Hello from command 1!", ephemeral=True)
 
-    @commands.Cog.listener()
-    async def on_wavelink_node_ready(self, node: wavelink.Node):
-        """Event fired when a node has finished connecting."""
-        print(f'Node: <{node.identifier}> is ready!')
+    @commands.command()
+    async def join(self, ctx):
+        vc = ctx.voice_client
+        try:
+            channel = ctx.author.voice.channel
+        except AttributeError:
+            return await ctx.send("How can I join if you are nowhere to be found?")
+        if vc:
+            await vc.disconnect()
+
+        voice = await channel.connect(cls=CustomPlayer())
+
+    @commands.command()
+    async def leave(self, ctx):
+        vc = ctx.voice_client
+        if vc:
+            await vc.disconnect()
+        else:
+            await ctx.send("how can i disconnect when i am not connect?")
+
+    @commands.command()
+    async def play(self, ctx: commands.Context, *, search: str = commands.parameter(
+            description="Plays a song from url or query. Accepted urls are: spotify [track,album,playlist], youtube.")):
+        """
+        Play requested song (url or query). Queues if a song is already playing.
+
+        Usage:
+        !play <search>
+        """
+        url_type = self.check_string(search)
+        action = self.url_type_mapping.get(url_type, None)
+        vc = ctx.voice_client
+        if not vc:
+            custom_player = CustomPlayer()
+            vc: CustomPlayer = await ctx.author.voice.channel.connect(
+                cls=custom_player)
+        if action:
+            await action(self, ctx, search, vc)
+        else:
+            # handle text input
+            await ctx.send("Idk that link is suss. Try again.")
+
+    @commands.command()
+    async def pause(self, ctx):
+        """Skips the current song."""
+        vc = ctx.voice_client
+        if vc:
+            if vc.is_playing() and not vc.is_paused():
+                await vc.pause()
+            else:
+                await ctx.send("Nothing is playing.")
+        else:
+            await ctx.send("The bot is not connected to a voice channel")
+
+    @commands.command()
+    async def resume(self, ctx):
+        """Resumes the current song."""
+        vc = ctx.voice_client
+        if vc:
+            if vc.is_paused():
+                await vc.resume()
+            else:
+                await ctx.send("Nothing is paused.")
+        else:
+            await ctx.send("The bot is not connected to a voice channel")
 
     @commands.command()
     async def skip(self, ctx):
+        """Skip the current song."""
         vc = ctx.voice_client
         if vc:
             if not vc.is_playing():
@@ -71,69 +135,12 @@ class Music(commands.Cog):
             await ctx.send("The bot is not connected to a voice channel.")
 
     @commands.command()
-    async def pause(self, ctx):
-        vc = ctx.voice_client
-        if vc:
-            if vc.is_playing() and not vc.is_paused():
-                await vc.pause()
-            else:
-                await ctx.send("Nothing is playing.")
-        else:
-            await ctx.send("The bot is not connected to a voice channel")
-
-
-    @commands.command()
-    async def resume(self, ctx):
-        vc = ctx.voice_client
-        if vc:
-            if vc.is_paused():
-                await vc.resume()
-            else:
-                await ctx.send("Nothing is paused.")
-        else:
-            await ctx.send("The bot is not connected to a voice channel")
-
-
-    @commands.command()
-    async def play(self, ctx: commands.Context, *, search: str):
-        url_type = self.check_string(search)
-        action = self.url_type_mapping.get(url_type, None)
-
-        vc = ctx.voice_client
-        if not vc:
-            custom_player = CustomPlayer()
-            vc: CustomPlayer = await ctx.author.voice.channel.connect(cls=custom_player)
-
-        if action:
-            await action(self, ctx, search, vc)
-        else:
-            # handle text input
-            await ctx.send("Idk that link is suss. Try again.")
-
-    @commands.command()
     async def connect(self, ctx):
-        vc = ctx.voice_client
-        
-        try:
-            channel = ctx.author.voice.channel
-        except AttributeError:
-            return await ctx.send("How can I join if you are nowhere to be found?")
-        
-        if vc:
-            await vc.disconnect()
-        
-        voice = await channel.connect(cls=CustomPlayer())
-    
-
-
+        await ctx.send("I now use ?join instead of ?connect")
 
     @commands.command()
     async def disconnect(self, ctx):
-        vc = ctx.voice_client
-        if vc:
-            await vc.disconnect()
-        else:
-            await ctx.send("how can i disconnect when i am not connect?")
+        await ctx.send("I now use ?leave instead of ?disconnect")
 
     async def play_spotify_track(self, ctx: discord.ext.commands.Context, track: str, vc: CustomPlayer):
 
@@ -159,7 +166,7 @@ class Music(commands.Cog):
 
     async def play_youtube_song(self, ctx: discord.ext.commands.Context, query: str, vc: CustomPlayer):
         try:
-            # remove time from youtube link 
+            # remove time from youtube link
             query = re.sub(r'&t=\d+', '', query)
             print(query)
             track = await wavelink.NodePool.get_node().get_tracks(wavelink.YouTubeTrack, query)
@@ -186,8 +193,7 @@ class Music(commands.Cog):
         pass
 
     async def play_query(self, ctx: discord.ext.commands.Context, search: str, vc: CustomPlayer):
-        print("Query")
-    # convert query to youtube url
+        # convert query to youtube url
         track = await wavelink.YouTubeTrack.search(query=search, return_first=True)
         if vc.is_playing() or not vc.queue.is_empty:
             vc.queue.put(item=track)
@@ -203,71 +209,55 @@ class Music(commands.Cog):
                 url=vc.source.uri,
                 description=f"Playing {vc.source.title} in {vc.channel}"
             ))
-            # Map URL types to their corresponding functions
+
+    # Map URL types to their corresponding functions
     url_type_mapping = {
         'Spotify Track': play_spotify_track,
         'Spotify Playlist': play_spotify_playlist,
         'Spotify Album': play_spotify_playlist,
         'YouTube Song': play_youtube_song,
         'YouTube Playlist': play_youtube_playlist,
-        'Text' : play_query,
+        'Text': play_query,
     }
+
 
     def check_string(self, input_string):
 
         youtube_pattern = re.compile(
-           r'https?://(www\.)?(youtube|youtu)(\.com|\.be)/(playlist\?list=|watch\?v=|embed/|)([a-zA-Z0-9-_]+)(\&t=\d+s)?|https://youtu.be/([a-zA-Z0-9-_]+)(\?t=\d+s)?')
+            (r'https?://(www\.)?(youtube|youtu)(\.com|\.be)/'
+            '(playlist\?list=|watch\?v=|embed/|)([a-zA-Z0-9-_]+)(\&t=\d+s)?'
+            '|https://youtu.be/([a-zA-Z0-9-_]+)(\?t=\d+s)?'))
         spotify_pattern = re.compile(
-            r'https?://open\.spotify\.com/(album|playlist|track)/([a-zA-Z0-9-]+)(/[a-zA-Z0-9-]+)?(\?.*)?')
+            (r'https?://open\.spotify\.com/(album|playlist|track)'
+            '/([a-zA-Z0-9-]+)(/[a-zA-Z0-9-]+)?(\?.*)?'))
 
         youtube_match = youtube_pattern.match(input_string)
         spotify_match = spotify_pattern.match(input_string)
 
         if youtube_match:
-            if 'watch?v=' or  'youtu.be' in youtube_match.group():
+            return self.get_youtube_pattern(youtube_match)
+        elif spotify_match:
+            return self.get_spotify_pattern(spotify_match)
+        return 'Text'
+
+
+    def get_spotify_pattern(spotify_match):
+        if spotify_match:
+            if 'track' in spotify_match.group():
+                return 'Spotify Track'
+            elif 'playlist' in spotify_match.group():
+                return 'Spotify Playlist'
+            elif 'album' in spotify_match.group():
+                return 'Spotify Album'
+            else:
+                return 'Spotify URL'
+
+
+    def get_youtube_pattern(youtube_match):
+        if youtube_match:
+            if 'watch?v=' in youtube_match.group() or 'youtu.be' in youtube_match.group():
                 return 'YouTube Song'
             elif 'playlist?list=' in youtube_match.group():
                 return 'YouTube Playlist'
             else:
                 return 'YouTube URL'
-        elif spotify_match:
-            if 'album' in spotify_match.group():
-                return 'Spotify Album'
-            elif 'playlist' in spotify_match.group():
-                return 'Spotify Playlist'
-            elif 'track' in spotify_match.group():
-                return 'Spotify Track'
-            else:
-                return 'Spotify URL'
-        else:
-            return 'Text'
-"""
-
-@commands.command()
-    async def play(self, ctx, *, search: wavelink.YouTubeTrack):
-        vc = ctx.voice_client
-        if not vc:
-            custom_player = CustomPlayer()
-            vc: CustomPlayer = await ctx.author.voice.channel.connect(cls=custom_player)
-
-        if vc.is_playing() or not vc.queue.is_empty:
-
-            #
-            vc.queue.put(item=search)
-
-            await ctx.send(embed=discord.Embed(
-                title=search.title,
-                url=search.uri,
-                description=f"Queued {search.title} in {vc.channel}"
-            ))
-        else:
-            await vc.play(search)
-
-            await ctx.send(embed=discord.Embed(
-                title=vc.source.title,
-                url=vc.source.uri,
-                description=f"Playing {vc.source.title} in {vc.channel}"
-            ))
-
-
-"""
