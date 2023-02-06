@@ -10,23 +10,29 @@ from src.ui import ui
 from music import Music
 import datetime
 from gpt import GPT3
+import openai 
 
 client = commands.Bot(command_prefix="?", intents=discord.Intents.all())
 u = ui()
 
 
+#############################    CLIENT EVENTS    #############################
+
+
+# METHOD: on_ready()
+# PURPOSE: executes once the client/bot has booted.
 @client.event
 async def on_ready():
     try:
         await client.add_cog(Music(client))
         await client.add_cog(GPT3(client))
         synced = await client.tree.sync()
-        client.loop.create_task(status_task())
+        client.loop.create_task(status_task())    
         print("Synced: {}".format(synced))
         print("WELCOME")
     except ClientException:
         print("Failed to sync")
-
+    
 
 @client.tree.command()
 async def longest_users(ctx: discord.Interaction, num_users: int = 5):
@@ -42,15 +48,41 @@ async def longest_users(ctx: discord.Interaction, num_users: int = 5):
         now = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
         joined_at = member.joined_at.replace(tzinfo=datetime.timezone.utc)
         delta = now - joined_at
-        message += f"{i}. {member.name} ({delta.days} days)\n"  # \n
+        message += f"{i}. {member.name} ({delta.days} days)\n" #\n
 
     # Send the message
     await ctx.response.send_message(message)
 
 
+#  METHOD: status_task()
+# PURPOSE: Is called on a loop from on_ready, and allows certain methods
+#          to be asynchronously called during execution
 async def status_task():
     while True:
         await asyncio.sleep(1)
+        
+
+
+#############################   CLIENT COMMANDS   #############################
+
+
+#  METHOD: join
+# PURPOSE: User can request that the bot joins the channel that they
+#          are currently in. 
+@client.command()
+async def goto(ctx):
+    """Moves the bo"""
+    try: 
+        guild = ctx.guild
+        message = ctx.message.content[6:]
+        voiceChannel=ctx.guild.get_channel(int(message))  
+
+        if ctx.voice_client is None:
+            await voiceChannel.connect()
+        else:
+            await ctx.voice_client.move_to(voiceChannel)
+    except ClientException:
+        print(colors.FAIL + "Client Exception thrown in join()")
 
 
 @client.command()
@@ -61,18 +93,19 @@ async def ping(ctx):
     await ctx.send(latency)
 
 
+# METHOD: say
+# PURPOSE: Given that the bot is inside a VC, it will speak outloud given
+#          the string provided by the user
 @client.command()
 async def say(ctx):
-    """Given that the bot is inside a VC, it will speak outloud given input text."""
-    try:
+    try:    
         message = ctx.message.content
-        command = 'espeak -p 10 -s 140 -a 1000 -ven-us --stdout "' + \
-            message[5:] + '" > message'
+        command = 'espeak -p 10 -s 140 -a 1000 -ven-us --stdout "' + message[5:] + '" > message'
         os.system(command)
         f = open("message", "r")
         voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
         voice.play(discord.FFmpegPCMAudio(f, executable="ffmpeg", pipe=True,
-                                          stderr=None, before_options="-fflags discardcorrupt -guess_layout_max 0", options=None))
+                stderr=None, before_options="-fflags discardcorrupt -guess_layout_max 0", options=None))
         f.close()
         print("Done")
     except AttributeError:
@@ -83,7 +116,7 @@ async def say(ctx):
 async def deleteMe(ctx):
     """Deletes every messages sent by the calling user in the channel"""
     async for message in ctx.channel.history(limit=None):
-        if (message.author.id == id):
+        if(message.author.id == id):
             await message.delete()
 
 
@@ -91,8 +124,27 @@ async def deleteMe(ctx):
 async def cleanBot(ctx):
     """Deletes every message sent by the bot in the calling channel."""
     async for message in ctx.channel.history(limit=None):
-        if (message.author.id == 748778849751400871):
+        if(message.author.id == 748778849751400871):
             await message.delete()
+
+
+@client.command()
+async def chat(ctx, *, prompt):
+    """Chat with the bot using GPT-3"""
+    model_engine = "text-davinci-002"
+    openai.api_key = os.environ["OPENAI_API_KEY"]
+    print("message:", prompt)
+    # Replace "your_api_key_here" with your OpenAI API key
+    completions = openai.Completion.create(
+        engine=model_engine,
+        prompt=prompt,
+        max_tokens=1024,
+        n=1,
+        stop=None,
+        temperature=0.5,
+    )
+    message = completions.choices[0].text
+    await ctx.send(message)
 
 
 class colors:
@@ -104,6 +156,7 @@ class colors:
     FAIL = '\033[91m'
     ENDC = '\033[0m'
     UNDERLINE = '\033[4m'
+
 
 
 client.help_command = commands.DefaultHelpCommand()
