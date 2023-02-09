@@ -1,6 +1,8 @@
 import asyncio
 import discord
+import requests
 import os
+import io
 from discord.ext import commands
 from discord import ClientException
 from discord import app_commands
@@ -145,6 +147,21 @@ async def chat(ctx, *, prompt):
     )
     message = completions.choices[0].text
     await ctx.send(message)
+
+@client.command()
+async def draw(ctx, *, prompt):
+    """Generates an image using DALL-E."""
+    openai.api_key = os.environ["OPENAI_API_KEY"]
+    response = openai.Image.create(
+        prompt=prompt,
+        n=1,
+        size="1024x1024",
+    )
+    image_url = response['data'][0]['url']
+    # Get the image and send it to Discord
+    image_data = requests.get(image_url).content
+    file = discord.File(io.BytesIO(image_data), "image.jpg")
+    await ctx.send(file=file)
 
 
 class colors:
