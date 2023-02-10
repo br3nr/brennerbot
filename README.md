@@ -1,4 +1,9 @@
-# BrennerBot
+<div align="center">
+	<br />
+	<p>
+		<a><img src="assets/banner.png" width="546" alt="Brenner Bot <3" /></a>
+	</p>
+</div>
 
 ## About
 BrennerBot is a python discord bot that comes with a few 😎 cool 😎 features:
