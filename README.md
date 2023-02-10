@@ -10,7 +10,34 @@ BrennerBot is a python discord bot that comes with a few 😎 cool 😎 features
 - Play music spotify and youtube using [Wavelink](https://github.com/PythonistaGuild/Wavelink)
 - Chat and generate images using GPT-3 from [OpenAI](https://openai.com/api/)
 
-It is currently a work in progress, but feel free to use it.
+It is currently a work in progress, but feel free to use it as you wish.
+
+## Features
+### GPT-3 & DALL-E Integration
+`/chat {prompt}`
+<div align="center">
+	<br />
+	<p>
+		<a><img src="assets/chat.gif" width="346" alt="Brenner Bot <3" /></a>
+	</p>
+</div>
+
+`/draw {prompt}`
+<div align="center">
+	<br />
+	<p>
+		<a><img src="assets/dalle.gif" width="346" alt="Brenner Bot <3" /></a>
+	</p>
+</div>
+
+
+### Music Player
+- Music can be played with the following commands:
+  - `?play`, `?pause`, `?resume`, `?skip` & `?stop`
+- The bot will join on default, but can be manually moved using `?join` and `?leave`
+- All songs are queued by default if a song is currently playing
+
+
 
 ## Requirements
 - [Discord.py](https://github.com/Rapptz/discord.py)
@@ -20,8 +47,6 @@ It is currently a work in progress, but feel free to use it.
    - [Spotify](https://developer.spotify.com/documentation/web-api/) - To support spotify tracks, albums and playlists in the music player 📻
 
 ## Getting Started 
-#
-
 
 ### Cloning the repo
 ```
