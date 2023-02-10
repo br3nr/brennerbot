@@ -146,10 +146,18 @@ class Music(commands.Cog):
         track = await spotify.SpotifyTrack.search(query=track, return_first=True)
         if vc.is_playing() or not vc.queue.is_empty:
             vc.queue.put(item=track)
-            await ctx.send(f'Queued {track.title} in {vc.channel}')
+            await ctx.send(embed=discord.Embed(
+                    title=track.title,
+                    url=track.uri,
+                    description=f"Queued {track.title} in {vc.channel}"
+                ))
         else:
             await vc.play(track)
-            await ctx.send(f'Playing {track.title} in {vc.channel}')
+            await ctx.send(embed=discord.Embed(
+                    title=track.title,
+                    url=track.uri,
+                    description=f"Queued {track.title} in {vc.channel}"
+                ))
 
     async def play_spotify_playlist(self, ctx: discord.ext.commands.Context, playlist: str, vc: CustomPlayer):
         await ctx.send("Loading playlist...")
@@ -238,7 +246,7 @@ class Music(commands.Cog):
             return self.get_spotify_pattern(spotify_match)
         return 'Text'
 
-    def get_spotify_pattern(spotify_match):
+    def get_spotify_pattern(self, spotify_match):
         if spotify_match:
             if 'track' in spotify_match.group():
                 return 'Spotify Track'
@@ -249,7 +257,7 @@ class Music(commands.Cog):
             else:
                 return 'Spotify URL'
 
-    def get_youtube_pattern(youtube_match):
+    def get_youtube_pattern(self, youtube_match):
         if youtube_match:
             if 'watch?v=' in youtube_match.group() or 'youtu.be' in youtube_match.group():
                 return 'YouTube Song'
