@@ -5,21 +5,14 @@ import os
 import io
 from discord.ext import commands
 from discord import ClientException
-from discord import app_commands
-from src import save
-from src import bullybot
-from src.ui import ui
 from music import Music
 import datetime
 from gpt import GPT3
 import openai 
 
 client = commands.Bot(command_prefix="?", intents=discord.Intents.all())
-u = ui()
-
 
 #############################    CLIENT EVENTS    #############################
-
 
 # METHOD: on_ready()
 # PURPOSE: executes once the client/bot has booted.
@@ -130,40 +123,6 @@ async def cleanBot(ctx):
             await message.delete()
 
 
-@client.command()
-async def chat(ctx, *, prompt):
-    """Chat with the bot using GPT-3"""
-    model_engine = "text-davinci-002"
-    openai.api_key = os.environ["OPENAI_API_KEY"]
-    print("message:", prompt)
-    # Replace "your_api_key_here" with your OpenAI API key
-    completions = openai.Completion.create(
-        engine=model_engine,
-        prompt=prompt,
-        max_tokens=1024,
-        n=1,
-        stop=None,
-        temperature=0.5,
-    )
-    message = completions.choices[0].text
-    await ctx.send(message)
-
-@client.command()
-async def draw(ctx, *, prompt):
-    """Generates an image using DALL-E."""
-    openai.api_key = os.environ["OPENAI_API_KEY"]
-    response = openai.Image.create(
-        prompt=prompt,
-        n=1,
-        size="1024x1024",
-    )
-    image_url = response['data'][0]['url']
-    # Get the image and send it to Discord
-    image_data = requests.get(image_url).content
-    file = discord.File(io.BytesIO(image_data), "image.jpg")
-    await ctx.send(file=file)
-
-
 class colors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -173,8 +132,6 @@ class colors:
     FAIL = '\033[91m'
     ENDC = '\033[0m'
     UNDERLINE = '\033[4m'
-
-
 
 client.help_command = commands.DefaultHelpCommand()
 client.run(os.environ["DISCORD_TOKEN"])
