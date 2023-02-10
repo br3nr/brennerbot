@@ -1,6 +1,8 @@
 import asyncio
 import discord
+import requests
 import os
+import io
 from discord.ext import commands
 from discord import ClientException
 from music import Music
