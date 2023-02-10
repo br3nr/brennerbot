@@ -7,9 +7,6 @@ from wavelink.ext import spotify
 import re
 import os
 
-cid = os.environ["SPOTIFY_CLIENT_ID"]
-csecret = os.environ["SPOTIFY_CLIENT_SECRET"]
-
 
 class CustomPlayer(wavelink.Player):
     """Custom player class for wavelink."""
@@ -25,6 +22,8 @@ class Music(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.song_queue = {}
+        self.cid = os.environ["SPOTIFY_CLIENT_ID"]
+        self.csecret = os.environ["SPOTIFY_CLIENT_SECRET"]
         bot.loop.create_task(self.connect_nodes())
 
     async def connect_nodes(self):
@@ -34,7 +33,7 @@ class Music(commands.Cog):
         await wavelink.NodePool.create_node(bot=self.bot,
                                             host='0.0.0.0',
                                             port=2333,
-                                            password='1234', spotify_client=spotify.SpotifyClient(client_id=cid, client_secret=csecret))
+                                            password='1234', spotify_client=spotify.SpotifyClient(client_id=self.cid, client_secret=self.csecret))
 
     @commands.Cog.listener()
     async def on_wavelink_track_end(self, player: CustomPlayer, track: wavelink.Track, reason):
@@ -220,16 +219,15 @@ class Music(commands.Cog):
         'Text': play_query,
     }
 
-
     def check_string(self, input_string):
 
         youtube_pattern = re.compile(
             (r'https?://(www\.)?(youtube|youtu)(\.com|\.be)/'
-            '(playlist\?list=|watch\?v=|embed/|)([a-zA-Z0-9-_]+)(\&t=\d+s)?'
-            '|https://youtu.be/([a-zA-Z0-9-_]+)(\?t=\d+s)?'))
+             '(playlist\?list=|watch\?v=|embed/|)([a-zA-Z0-9-_]+)(\&t=\d+s)?'
+             '|https://youtu.be/([a-zA-Z0-9-_]+)(\?t=\d+s)?'))
         spotify_pattern = re.compile(
             (r'https?://open\.spotify\.com/(album|playlist|track)'
-            '/([a-zA-Z0-9-]+)(/[a-zA-Z0-9-]+)?(\?.*)?'))
+             '/([a-zA-Z0-9-]+)(/[a-zA-Z0-9-]+)?(\?.*)?'))
 
         youtube_match = youtube_pattern.match(input_string)
         spotify_match = spotify_pattern.match(input_string)
@@ -239,7 +237,6 @@ class Music(commands.Cog):
         elif spotify_match:
             return self.get_spotify_pattern(spotify_match)
         return 'Text'
-
 
     def get_spotify_pattern(spotify_match):
         if spotify_match:
@@ -251,7 +248,6 @@ class Music(commands.Cog):
                 return 'Spotify Album'
             else:
                 return 'Spotify URL'
-
 
     def get_youtube_pattern(youtube_match):
         if youtube_match:
