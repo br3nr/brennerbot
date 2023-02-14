@@ -10,7 +10,9 @@ BrennerBot is a python discord bot that comes with a few 😎 cool 😎 features
 - Play music spotify and youtube using [Wavelink](https://github.com/PythonistaGuild/Wavelink)
 - Chat and generate images using GPT-3 from [OpenAI](https://openai.com/api/)
 
-It is currently a work in progress, but feel free to use it as you wish.
+It is currently a work in progress, but feel free to use it as you wish. Give this repo a ⭐ star ⭐ if you find it useful!
+
+If have any questions or need any help you can message me on discord: `m4x#9999'.
 
 ## Features
 ### GPT-3 & DALL-E Integration
