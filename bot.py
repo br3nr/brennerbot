@@ -46,7 +46,7 @@ async def longest_users(ctx: discord.Interaction, num_users: int = 5):
         message += f"{i}. {member.name} ({delta.days} days)\n" #\n
 
     # Send the message
-    await ctx.response.send_message(message)
+    await ctx.response.send_message(message, ephemeral=True)
 
 
 #  METHOD: status_task()
