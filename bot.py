@@ -8,9 +8,11 @@ from discord import ClientException
 from music import Music
 import datetime
 from gpt import GPT3
-import openai 
+from log import BrennerLog
+import sys 
 
 client = commands.Bot(command_prefix="?", intents=discord.Intents.all())
+logger = BrennerLog.get_instance("logs/bot.log")
 
 #############################    CLIENT EVENTS    #############################
 
@@ -24,7 +26,6 @@ async def on_ready():
         synced = await client.tree.sync()
         client.loop.create_task(status_task())    
         print("Synced: {}".format(synced))
-        print("WELCOME")
     except ClientException:
         print("Failed to sync")
     
@@ -65,13 +66,10 @@ async def status_task():
 # PURPOSE: User can request that the bot joins the channel that they
 #          are currently in. 
 @client.command()
-async def goto(ctx):
-    """Moves the bo"""
+async def goto(ctx, message):
+    """Moves the bot to a given channel ID"""
     try: 
-        guild = ctx.guild
-        message = ctx.message.content[6:]
         voiceChannel=ctx.guild.get_channel(int(message))  
-
         if ctx.voice_client is None:
             await voiceChannel.connect()
         else:
@@ -118,8 +116,10 @@ async def deleteMe(ctx):
 @client.command()
 async def cleanBot(ctx):
     """Deletes every message sent by the bot in the calling channel."""
+    logger.log_command(ctx.author.id, 'hello')
+    app_info = await client.application_info()
     async for message in ctx.channel.history(limit=None):
-        if(message.author.id == 748778849751400871):
+        if(message.author.id == app_info.id):
             await message.delete()
 
 

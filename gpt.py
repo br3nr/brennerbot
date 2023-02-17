@@ -4,8 +4,9 @@ from discord import app_commands
 import openai
 import requests
 import io
+import sys
 import os
-import asyncio
+from log import BrennerLog
 
 class GPT3(commands.Cog):
     """Commands for interacting with GPT-3."""
@@ -13,6 +14,7 @@ class GPT3(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.model_engine = "text-davinci-002"
+        self.logger = BrennerLog.get_instance()
         openai.api_key = os.environ["OPENAI_API_KEY"]
 
     @commands.command()
@@ -33,6 +35,7 @@ class GPT3(commands.Cog):
             image_url = response['data'][0]['url']
             image_data = requests.get(image_url).content
             file = discord.File(io.BytesIO(image_data), "image.jpg")
+            self.logger.log_command(interaction, "?draw", prompt)
             await interaction.followup.send(file=file)
         except openai.error.InvalidRequestError:
             await interaction.followup.send("Forbidden word in request") 
@@ -55,8 +58,8 @@ class GPT3(commands.Cog):
             stop=None,
             temperature=temp,
         )
+        self.logger.log_command(interaction.user.name, "?chat", prompt)
         message = completions.choices[0].text
-
         if len(message) > 2000:
             chunks = [message[i:i + 2000] for i in range(0, len(message), 2000)]
             for chunk in chunks:

@@ -1,12 +1,12 @@
 import discord
-import asyncio
 from discord.ext import commands
 import wavelink
 from discord import app_commands
 from wavelink.ext import spotify
 import re
 import os
-
+from log import BrennerLog
+import sys 
 
 class CustomPlayer(wavelink.Player):
     """Custom player class for wavelink."""
@@ -61,10 +61,12 @@ class Music(commands.Cog):
         if vc:
             await vc.disconnect()
 
+        self.logger.log_command(ctx.author.id, 'join', ctx.message.content)
         voice = await channel.connect(cls=CustomPlayer())
 
     @commands.command()
     async def leave(self, ctx):
+        self.logger.log_command(ctx.author.id, 'leave', ctx.message.content)
         vc = ctx.voice_client
         if vc:
             await vc.disconnect()
@@ -80,22 +82,27 @@ class Music(commands.Cog):
         Usage:
         !play <search>
         """
-        url_type = self.check_string(search)
-        action = self.url_type_mapping.get(url_type, None)
-        vc = ctx.voice_client
-        if not vc:
-            custom_player = CustomPlayer()
-            vc: CustomPlayer = await ctx.author.voice.channel.connect(
-                cls=custom_player)
-        if action:
-            await action(self, ctx, search, vc)
-        else:
-            # handle text input
-            await ctx.send("Idk that link is suss. Try again.")
+        try:
+            self.logger.log_command(ctx.author.id, 'play', ctx.message.content)
+            url_type = self.check_string(search)
+            action = self.url_type_mapping.get(url_type, None)
+            vc = ctx.voice_client
+            if not vc:
+                custom_player = CustomPlayer()
+                vc: CustomPlayer = await ctx.author.voice.channel.connect(
+                    cls=custom_player)
+            if action:
+                await action(self, ctx, search, vc)
+            else:
+                # handle text input
+                await ctx.send("Idk that link is suss. Try again.")
+        except Exception as e:
+            self.logger.log_exception(e)
 
     @commands.command()
     async def pause(self, ctx):
         """Skips the current song."""
+        self.logger.log_command(ctx.author.id, 'pause', ctx.message.content)
         vc = ctx.voice_client
         if vc:
             if vc.is_playing() and not vc.is_paused():
@@ -108,6 +115,7 @@ class Music(commands.Cog):
     @commands.command()
     async def resume(self, ctx):
         """Resumes the current song."""
+        self.logger.log_command(ctx.author.id, 'resume', ctx.message.content)
         vc = ctx.voice_client
         if vc:
             if vc.is_paused():
@@ -120,6 +128,7 @@ class Music(commands.Cog):
     @commands.command()
     async def skip(self, ctx):
         """Skip the current song."""
+        self.logger.log_command(ctx.author.id, 'skip', ctx.message.content)
         vc = ctx.voice_client
         if vc:
             if not vc.is_playing():
