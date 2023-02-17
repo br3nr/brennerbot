@@ -56,7 +56,6 @@ async def longest_users(ctx: discord.Interaction, num_users: int = 5):
 async def status_task():
     while True:
         await asyncio.sleep(1)
-        
 
 
 #############################   CLIENT COMMANDS   #############################
@@ -86,31 +85,12 @@ async def ping(ctx):
     await ctx.send(latency)
 
 
-# METHOD: say
-# PURPOSE: Given that the bot is inside a VC, it will speak outloud given
-#          the string provided by the user
-@client.command()
-async def say(ctx):
-    try:    
-        message = ctx.message.content
-        command = 'espeak -p 10 -s 140 -a 1000 -ven-us --stdout "' + message[5:] + '" > message'
-        os.system(command)
-        f = open("message", "r")
-        voice = discord.utils.get(client.voice_clients, guild=ctx.guild)
-        voice.play(discord.FFmpegPCMAudio(f, executable="ffmpeg", pipe=True,
-                stderr=None, before_options="-fflags discardcorrupt -guess_layout_max 0", options=None))
-        f.close()
-        print("Done")
-    except AttributeError:
-        print(colors.FAIL + "Not in a voice channel")
-
-
-@client.command()
+'''@client.command() # removed until I can make this safer
 async def deleteMe(ctx):
     """Deletes every messages sent by the calling user in the channel"""
     async for message in ctx.channel.history(limit=None):
         if(message.author.id == id):
-            await message.delete()
+            await message.delete()'''
 
 
 @client.command()
