@@ -25,6 +25,7 @@ class Music(commands.Cog):
         self.cid = os.environ["SPOTIFY_CLIENT_ID"]
         self.csecret = os.environ["SPOTIFY_CLIENT_SECRET"]
         bot.loop.create_task(self.connect_nodes())
+        self.logger = BrennerLog.get_instance("logs/music.log")
 
     async def connect_nodes(self):
         """Connect to our Lavalink nodes."""

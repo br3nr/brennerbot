@@ -25,6 +25,12 @@ class BrennerLog:
             formatter = logging.Formatter('%(asctime)s %(message)s')
             handler.setFormatter(formatter)
             self.logger.addHandler(handler)
+            
+            # Create console handler
+            console_handler = logging.StreamHandler()
+            console_handler.setLevel(logging.DEBUG)
+            console_handler.setFormatter(formatter)
+            self.logger.addHandler(console_handler)
 
             # Create singleton            
             BrennerLog.__instance = self
