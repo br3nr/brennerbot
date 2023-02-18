@@ -11,6 +11,7 @@ from gpt import GPT3
 from log import BrennerLog
 import sys 
 
+
 client = commands.Bot(command_prefix="?", intents=discord.Intents.all())
 logger = BrennerLog.get_instance("logs/bot.log")
 

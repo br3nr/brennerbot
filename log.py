@@ -1,11 +1,12 @@
 import logging
 import sys 
+import os
 
 class BrennerLog:
     __instance = None
 
     @staticmethod 
-    def get_instance(filename="bot/bot.log"):
+    def get_instance(filename="logs/bot.log"):
         if BrennerLog.__instance == None:
             BrennerLog(filename)
         return BrennerLog.__instance
@@ -16,11 +17,15 @@ class BrennerLog:
         else:
             self.logger = logging.getLogger('brenner_log')
             self.logger.setLevel(logging.INFO)
-
-            # Create file handler to write log messages
-            handler = logging.FileHandler(filename)
+            try:
+                # Create file handler to write log messages
+                handler = logging.FileHandler(filename)
+            except FileNotFoundError:
+                print("Log file not found. Creating a new file...")
+                open(filename, 'a').close()
+                handler = logging.FileHandler(filename)
+            
             handler.setLevel(logging.INFO)
-
             # Set the log format
             formatter = logging.Formatter('%(asctime)s %(message)s')
             handler.setFormatter(formatter)
