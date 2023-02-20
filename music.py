@@ -5,8 +5,8 @@ from discord import app_commands
 from wavelink.ext import spotify
 import re
 import os
-from log import BrennerLog
-import sys 
+from log import log_command
+
 
 class CustomPlayer(wavelink.Player):
     """Custom player class for wavelink."""
@@ -25,7 +25,6 @@ class Music(commands.Cog):
         self.cid = os.environ["SPOTIFY_CLIENT_ID"]
         self.csecret = os.environ["SPOTIFY_CLIENT_SECRET"]
         bot.loop.create_task(self.connect_nodes())
-        self.logger = BrennerLog.get_instance("logs/music.log")
 
     async def connect_nodes(self):
         """Connect to our Lavalink nodes."""
@@ -53,6 +52,7 @@ class Music(commands.Cog):
         await interaction.response.send_message("Hello from command 1!", ephemeral=True)
 
     @commands.command()
+    @log_command
     async def join(self, ctx):
         vc = ctx.voice_client
         try:
@@ -61,13 +61,11 @@ class Music(commands.Cog):
             return await ctx.send("How can I join if you are nowhere to be found?")
         if vc:
             await vc.disconnect()
-
-        self.logger.log_command(ctx.author.id, 'join', ctx.message.content)
-        voice = await channel.connect(cls=CustomPlayer())
+        await channel.connect(cls=CustomPlayer())
 
     @commands.command()
+    @log_command
     async def leave(self, ctx):
-        self.logger.log_command(ctx.author.id, 'leave', ctx.message.content)
         vc = ctx.voice_client
         if vc:
             await vc.disconnect()
@@ -75,6 +73,7 @@ class Music(commands.Cog):
             await ctx.send("how can i disconnect when i am not connect?")
 
     @commands.command()
+    @log_command
     async def play(self, ctx: commands.Context, *, search: str = commands.parameter(
             description="Plays a song from url or query. Accepted urls are: spotify [track,album,playlist], youtube.")):
         """
@@ -83,27 +82,23 @@ class Music(commands.Cog):
         Usage:
         !play <search>
         """
-        try:
-            self.logger.log_command(ctx.author.id, 'play', ctx.message.content)
-            url_type = self.check_string(search)
-            action = self.url_type_mapping.get(url_type, None)
-            vc = ctx.voice_client
-            if not vc:
-                custom_player = CustomPlayer()
-                vc: CustomPlayer = await ctx.author.voice.channel.connect(
-                    cls=custom_player)
-            if action:
-                await action(self, ctx, search, vc)
-            else:
-                # handle text input
-                await ctx.send("Idk that link is suss. Try again.")
-        except Exception as e:
-            self.logger.log_exception(e)
+        url_type = self.check_string(search)
+        action = self.url_type_mapping.get(url_type, None)
+        vc = ctx.voice_client
+        if not vc:
+            custom_player = CustomPlayer()
+            vc: CustomPlayer = await ctx.author.voice.channel.connect(
+                cls=custom_player)
+        if action:
+            await action(self, ctx, search, vc)
+        else:
+            # handle text input
+            await ctx.send("Idk that link is suss. Try again.")
 
     @commands.command()
+    @log_command
     async def pause(self, ctx):
         """Skips the current song."""
-        self.logger.log_command(ctx.author.id, 'pause', ctx.message.content)
         vc = ctx.voice_client
         if vc:
             if vc.is_playing() and not vc.is_paused():
@@ -114,9 +109,9 @@ class Music(commands.Cog):
             await ctx.send("The bot is not connected to a voice channel")
 
     @commands.command()
+    @log_command
     async def resume(self, ctx):
         """Resumes the current song."""
-        self.logger.log_command(ctx.author.id, 'resume', ctx.message.content)
         vc = ctx.voice_client
         if vc:
             if vc.is_paused():
@@ -127,9 +122,9 @@ class Music(commands.Cog):
             await ctx.send("The bot is not connected to a voice channel")
 
     @commands.command()
+    @log_command
     async def skip(self, ctx):
         """Skip the current song."""
-        self.logger.log_command(ctx.author.id, 'skip', ctx.message.content)
         vc = ctx.voice_client
         if vc:
             if not vc.is_playing():
@@ -157,17 +152,17 @@ class Music(commands.Cog):
         if vc.is_playing() or not vc.queue.is_empty:
             vc.queue.put(item=track)
             await ctx.send(embed=discord.Embed(
-                    title=track.title,
-                    url=track.uri,
-                    description=f"Queued {track.title} in {vc.channel}"
-                ))
+                title=track.title,
+                url=track.uri,
+                description=f"Queued {track.title} in {vc.channel}"
+            ))
         else:
             await vc.play(track)
             await ctx.send(embed=discord.Embed(
-                    title=track.title,
-                    url=track.uri,
-                    description=f"Queued {track.title} in {vc.channel}"
-                ))
+                title=track.title,
+                url=track.uri,
+                description=f"Queued {track.title} in {vc.channel}"
+            ))
 
     async def play_spotify_playlist(self, ctx: discord.ext.commands.Context, playlist: str, vc: CustomPlayer):
         await ctx.send("Loading playlist...")
