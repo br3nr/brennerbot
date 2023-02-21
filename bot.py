@@ -5,9 +5,10 @@ import os
 import io
 from discord.ext import commands
 from discord import ClientException
-from music import Music
+from src.music import Music
 import datetime
-from gpt import GPT3
+from src.gpt import GPT3
+from src.remind import Reminder
 
 client = commands.Bot(command_prefix="?", intents=discord.Intents.all())
 
@@ -22,6 +23,7 @@ async def on_ready():
     try:
         await client.add_cog(Music(client))
         await client.add_cog(GPT3(client))
+        await client.add_cog(Reminder(client))
         synced = await client.tree.sync()
         client.loop.create_task(status_task())
         print("Synced: {}".format(synced))
