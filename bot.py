@@ -10,7 +10,7 @@ import datetime
 from src.gpt import GPT3
 from src.remind import Reminder
 
-client = commands.Bot(command_prefix="-", intents=discord.Intents.all())
+client = commands.Bot(command_prefix="?", intents=discord.Intents.all())
 
 #############################    CLIENT EVENTS    #############################
 
@@ -103,5 +103,4 @@ async def cleanBot(ctx):
 
 
 client.help_command = commands.DefaultHelpCommand()
-#client.run(os.environ["DISCORD_TOKEN"])
-client.run("MTA3NzQ3NDM4Mzc3OTYwNjYwMA.G6puW6.MviHm4Wm2i8UteWXeU7T-JLFjxeAauvhzXwsfI")
+client.run(os.environ["DISCORD_TOKEN"])
