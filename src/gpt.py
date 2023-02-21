@@ -5,7 +5,7 @@ import openai
 import requests
 import io
 import os
-from log import log_command
+from src.log import log_command
 
 
 class GPT3(commands.Cog):

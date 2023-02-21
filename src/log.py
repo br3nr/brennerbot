@@ -17,16 +17,18 @@ class BrennerLog:
         if BrennerLog.__instance is not None:
             raise Exception("Singleton is already initialised.")
         else:
-            self.relative_dir = os.path.dirname(os.path.abspath(__file__))
-            self.log_folder = os.path.join(self.relative_dir, 'logs')
-            self.bot_log_file = os.path.join(self.log_folder, "bot.log")
+            self.src_dir = os.path.dirname(os.path.abspath(__file__))
+            self.parent_dir = os.path.abspath(os.path.join(self.src_dir, '..'))
+            self.log_folder = os.path.join(self.parent_dir, 'logs')
+            self.bot_log_file = os.path.join(self.log_folder, 'bot.log')
+
 
             self.logger = logging.getLogger('brenner_log')
             self.logger.setLevel(logging.INFO)
             try:
                 if not os.path.exists(self.log_folder):
                     print("Log folder not found. Creating a new folder...")
-                    os.mkdir('logs')
+                    os.mkdir(self.log_folder)
                 if not os.path.exists(self.bot_log_file):
                     print("Log file not found. Creating a new file...")
                     open(self.bot_log_file, 'a+').close()
