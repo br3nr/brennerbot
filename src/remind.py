@@ -45,7 +45,7 @@ class Reminder(commands.Cog):
                     print(f"Failed to send reminder to user {user_id}: {e}")
 
             # wait for 1 minute before checking again
-            await asyncio.sleep(1)
+            await asyncio.sleep(60)
 
     @commands.command()
     @log_command
@@ -75,7 +75,7 @@ class Reminder(commands.Cog):
 
         # Add the duration to the current datetime to get the new datetime
         new_datetime = now + duration
-
+        
         try:
             if not os.path.exists(self.data_folder):
                 print("Log folder not found. Creating a new folder...")
@@ -83,10 +83,12 @@ class Reminder(commands.Cog):
             if not os.path.exists(self.data_file):
                 print("Log file not found. Creating a new file...")
                 open(self.data_file, 'a+').close()
-
             for user in users:
                 with open(self.data_file, 'a+') as f:
                     f.write(f"{user.id},{new_datetime},{activity}\n")
+            with open(self.data_file, 'a+') as f:
+                 user = await (self.bot.fetch_user(ctx.author.id))
+                 f.write(f"{user.id},{new_datetime},{activity}\n")
             await ctx.message.add_reaction("✅")
 
         except Exception as e:
