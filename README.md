@@ -41,8 +41,14 @@ Please consider leaving a ⭐ star ⭐ if you find this useful!
 - The bot will join on default, but can be manually moved using `?join` and `?leave`
 - All songs are queued by default if a song is currently playing
 
-
-
+### Reminders
+- Reminders can be set for you and your friends by using the `?remindme` command
+- Usage:`?remindme <XdYhZm> <reminder> 	
+	- Example: `?remindme 1h30m Remove cake from oven
+- You can also include other people in your reminder
+	- Example: `?remindme @brennerbot @max 1d5h10m CSGO 3v3
+- Reminders are received as a direct message from the bot
+ 
 ## Requirements
 - [Discord.py](https://github.com/Rapptz/discord.py)
 - [Wavelink Server](https://github.com/PythonistaGuild/Wavelink)
