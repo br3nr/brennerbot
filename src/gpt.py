@@ -40,7 +40,7 @@ class GPT3(commands.Cog):
             await interaction.followup.send("Forbidden word in request")
 
     @app_commands.command(name="chat")
-    @app_commands.describe(temp="The prompt you want GPT-3 to respond to.")
+    @app_commands.describe(prompt="The prompt you want GPT-3 to respond to.")
     @app_commands.describe(temp="Creativity of response. Can be a float between 0.0 and 2.0")
     @log_command
     async def slash_chat(self, interaction: discord.Interaction, prompt: str, temp: float = 0.8) -> None:
@@ -66,3 +66,28 @@ class GPT3(commands.Cog):
                 await interaction.followup.send(chunk)
         else:
             await interaction.followup.send(message)
+
+    @app_commands.command(name="convo")
+    @app_commands.describe(prompt="The prompt you want GPT-3 to respond to.")
+    @log_command
+    async def convo(self, interaction: discord.Interaction, prompt: str,) -> None:
+        
+        await interaction.response.defer()
+
+        messages = [
+            {"role": "system", "content": "You are an helpful assistant."}
+        ]
+
+        # while
+        prompt = input()
+        message_str = {"role": "user", "content": prompt}
+        messages.append(message_str)
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo-0301",
+            messages=messages
+        )
+        reply = response['choices'][0]['message']['content'])
+        assistant_str = {"role": "assistant", "content":reply}
+        messages.append(assistant_str)
+
+        await interaction.followup.send(reply)
