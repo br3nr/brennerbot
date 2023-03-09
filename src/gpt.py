@@ -67,27 +67,24 @@ class GPT3(commands.Cog):
         else:
             await interaction.followup.send(message)
 
-    @app_commands.command(name="convo")
-    @app_commands.describe(prompt="The prompt you want GPT-3 to respond to.")
+    @app_commands.command(name="chatgpt")
+    @app_commands.describe(prompt="The prompt you want Chat GPT to respond to.")
     @log_command
-    async def convo(self, interaction: discord.Interaction, prompt: str,) -> None:
-        
+    async def chatgpt(self, interaction: discord.Interaction, prompt: str,) -> None:
+
         await interaction.response.defer()
 
         messages = [
             {"role": "system", "content": "You are an helpful assistant."}
         ]
 
-        # while
-        prompt = input()
         message_str = {"role": "user", "content": prompt}
         messages.append(message_str)
+
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo-0301",
             messages=messages
         )
-        reply = response['choices'][0]['message']['content'])
-        assistant_str = {"role": "assistant", "content":reply}
-        messages.append(assistant_str)
 
+        reply = response['choices'][0]['message']['content']
         await interaction.followup.send(reply)
