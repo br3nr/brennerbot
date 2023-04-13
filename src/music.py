@@ -29,14 +29,16 @@ class Music(commands.Cog):
     async def connect_nodes(self):
         """Connect to our Lavalink nodes."""
         await self.bot.wait_until_ready()
-
-        await wavelink.NodePool.create_node(bot=self.bot,
-                                            host='0.0.0.0',
-                                            port=2333,
-                                            password='1234', spotify_client=spotify.SpotifyClient(client_id=self.cid, client_secret=self.csecret))
+        sc = spotify.SpotifyClient(
+            client_id=self.cid, client_secret=self.csecret
+        )
+        node: wavelink.Node = wavelink.Node(
+            uri='http://localhost:2333', password='1234')
+        await wavelink.NodePool.connect(client=self.bot, nodes=[node], spotify=sc)
 
     @commands.Cog.listener()
-    async def on_wavelink_track_end(self, player: CustomPlayer, track: wavelink.Track, reason):
+    async def on_wavelink_track_end(self, payload: wavelink.TrackEventPayload):
+        player = payload.player
         if not player.queue.is_empty:
             next_track = player.queue.get()
             await player.play(next_track)
@@ -44,12 +46,7 @@ class Music(commands.Cog):
     @commands.Cog.listener()
     async def on_wavelink_node_ready(self, node: wavelink.Node):
         """Event fired when a node has finished connecting."""
-        print(f'Node: <{node.identifier}> is ready!')
-
-    @app_commands.command(name="command-1")
-    async def my_command(self, interaction: discord.Interaction) -> None:
-        """ /command-1 """
-        await interaction.response.send_message("Hello from command 1!", ephemeral=True)
+        print(f'Node: <{node}> is ready!')
 
     @commands.command()
     @log_command
@@ -132,23 +129,14 @@ class Music(commands.Cog):
             if vc.queue.is_empty:
                 return await vc.stop()
 
-            await vc.seek(vc.track.length * 1000)
+            await vc.seek(vc.current.length * 1000)
             if vc.is_paused():
                 await vc.resume()
         else:
             await ctx.send("The bot is not connected to a voice channel.")
 
-    @commands.command()
-    async def connect(self, ctx):
-        await ctx.send("I now use ?join instead of ?connect")
-
-    @commands.command()
-    async def disconnect(self, ctx):
-        await ctx.send("I now use ?leave instead of ?disconnect")
-
     async def play_spotify_track(self, ctx: discord.ext.commands.Context, track: str, vc: CustomPlayer):
-
-        track = await spotify.SpotifyTrack.search(query=track, return_first=True)
+        track = await spotify.SpotifyTrack.search(track, return_first=True)
         if vc.is_playing() or not vc.queue.is_empty:
             vc.queue.put(item=track)
             await ctx.send(embed=discord.Embed(
@@ -166,14 +154,14 @@ class Music(commands.Cog):
 
     async def play_spotify_playlist(self, ctx: discord.ext.commands.Context, playlist: str, vc: CustomPlayer):
         await ctx.send("Loading playlist...")
-        async for partial in spotify.SpotifyTrack.iterator(query=playlist, partial_tracks=True):
+        async for partial in spotify.SpotifyTrack.iterator(query=playlist):
             if vc.is_playing() or not vc.queue.is_empty:
                 vc.queue.put(item=partial)
             else:
                 await vc.play(partial)
                 await ctx.send(embed=discord.Embed(
-                    title=vc.source.title,
-                    description=f"Playing {vc.source.title} in {vc.channel}"
+                    title=vc.current.title,
+                    description=f"Playing {vc.current.title} in {vc.channel}"
                 ))
 
     async def play_youtube_song(self, ctx: discord.ext.commands.Context, query: str, vc: CustomPlayer):
@@ -193,9 +181,9 @@ class Music(commands.Cog):
             else:
                 await vc.play(track)
                 await ctx.send(embed=discord.Embed(
-                    title=vc.source.title,
-                    url=vc.source.uri,
-                    description=f"Playing {vc.source.title} in {vc.channel}"
+                    title=vc.current.title,
+                    url=vc.current.uri,
+                    description=f"Playing {vc.current.title} in {vc.channel}"
                 ))
         except Exception as e:
             await ctx.send(f"That link is weird. Make sure theres no timestamp at the end.")
@@ -206,7 +194,7 @@ class Music(commands.Cog):
 
     async def play_query(self, ctx: discord.ext.commands.Context, search: str, vc: CustomPlayer):
         # convert query to youtube url
-        track = await wavelink.YouTubeTrack.search(query=search, return_first=True)
+        track = await wavelink.YouTubeTrack.search(search, return_first=True)
         if vc.is_playing() or not vc.queue.is_empty:
             vc.queue.put(item=track)
             await ctx.send(embed=discord.Embed(
@@ -217,9 +205,9 @@ class Music(commands.Cog):
         else:
             await vc.play(track)
             await ctx.send(embed=discord.Embed(
-                title=vc.source.title,
-                url=vc.source.uri,
-                description=f"Playing {vc.source.title} in {vc.channel}"
+                title=vc.current.title,
+                url=vc.current.uri,
+                description=f"Playing {vc.current.title} in {vc.channel}"
             ))
 
     # Map URL types to their corresponding functions
