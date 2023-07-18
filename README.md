@@ -12,7 +12,7 @@ BrennerBot is a python discord bot that comes with a few 😎 cool 😎 features
 
 It is currently a work in progress, but feel free to use it as you wish. 
 
-If have any questions or need any help you can message me on discord: `k4br`.
+If have any questions or need any help you can message me on discord: [k4br](https://discordapp.com/users/253874297066618880).
 
 Please consider leaving a ⭐ star ⭐ if you find this useful! 
 
